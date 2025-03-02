@@ -6,10 +6,23 @@ from views.report_view import ReportView
 from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
 from controllers.report_controller import ReportController
+from utils.validators import validate_date_format, validate_tournament_start_date, validate_tournament_dates_order
 
 
 class TournamentController(DataManager):
+    """
+    Controller class for managing tournament operations.
 
+    This class handles the creation, management, and execution of chess tournaments.
+    It provides functionality for adding tournaments, managing players, viewing reports,
+    and orchestrating tournament rounds.
+
+    Attributes:
+        view (TournamentView): The view instance for tournament-related UI
+        tournaments_file (str): Path to the JSON file storing tournament data
+        menu_choice_list (list): List of menu options and their callbacks
+        current_tournament (Tournament): Currently active tournament instance
+    """
     def __init__(self, view: TournamentView):
         super().__init__()
         self.view = view
@@ -57,24 +70,63 @@ class TournamentController(DataManager):
 
     def add_tournament(self):
         """
-        Create and initialize a new tournament with players and rounds.
-        This method performs the following steps:
-        1. Loads existing players
-        2. Updates the view with the player list
-        3. Gets tournament details from user input
-        4. Creates a new Tournament instance
-        5. Initializes and starts tournament rounds
-        6. Saves the tournament data
+        Creates a new tournament by collecting necessary information from the user.
+        This method handles the creation of a new tournament by:
+        1. Getting tournament details (name, location, dates) from user input
+        2. Validating date formats and logical constraints
+        3. Loading and selecting players for the tournament
+        4. Creating tournament rounds
+        5. Saving the tournament data
         Returns:
             None
         Side Effects:
-            - Creates and saves a new Tournament instance
             - Updates self.current_tournament with the new tournament
+            - Saves tournament data to storage
+            - Displays messages to user through view
+            - Creates and initializes tournament rounds
+        Raises:
+            May raise exceptions from validate_date_format(), validate_tournament_start_date(),
+            validate_tournament_dates_order() if date validation fails
         """
 
-        players = PlayerController(PlayerView()).load_players()
+        print("\nCreate tournament")
+        tournament_name = self.view.get_name()
+        tournament_location = self.view.get_location()
+
+        while True:
+            start_date = self.view.get_start_date()
+            if not validate_date_format(start_date):
+                self.view.show_message("Invalid date format. Please use YYYY-MM-DD format.")
+                continue
+            if not validate_tournament_start_date(start_date):
+                self.view.show_message("Tournament cannot start in the past.")
+                continue
+            break
+
+        while True:
+            end_date = self.view.get_end_date()
+            if not validate_date_format(end_date):
+                self.view.show_message("Invalid date format. Please use YYYY-MM-DD format.")
+                continue
+            if not validate_tournament_dates_order(start_date, end_date):
+                self.view.show_message("End date must be after start date.")
+                continue
+            break
+
+        players = PlayerController(PlayerView()).load_data('players')
         self.view.set_players_list(players)
-        tournament_data = self.view.get_tournament_details()
+        player_list = self.view.select_players()
+        description = self.view.get_description()
+
+        tournament_data = {
+            "name": tournament_name,
+            "location": tournament_location,
+            "startDate": start_date,
+            "endDate": end_date,
+            "playerList": player_list,
+            "description": description
+        }
+
         self.current_tournament = Tournament(**tournament_data)
         self.current_tournament.roundList = self.start_rounds()
         self.saving_tournament(self.current_tournament)
@@ -115,9 +167,11 @@ class TournamentController(DataManager):
         players = self.current_tournament.playerList
         for i in range(1, self.current_tournament.roundNumber + 1):
             round_controller = RoundController(self.current_tournament, i)
-            round_data = round_controller.manage_round()
+            round_data, is_last_round = round_controller.manage_round()
             rounds.append(round_data)
             self.current_tournament.playerList = players
+            if is_last_round:
+                self.end_tournament()
         return rounds
 
     def saving_tournament(self, tournament):
@@ -155,4 +209,30 @@ class TournamentController(DataManager):
                         player = match_data[i][0]
                         match_data[i][0] = player.model_dump() if hasattr(player, 'model_dump') else player
 
-        self.save_tournament(tournament_dict)
+        self.save_data(tournament_dict, 'tournaments')
+
+    def end_tournament(self):
+        """
+        End the tournament, determine winner(s) and display results.
+        Handles single winner and tie cases.
+        """
+        if not self.current_tournament:
+            self.view.show_message("No active tournament")
+            return
+
+        players = self.current_tournament.playerList
+        if not players:
+            self.view.show_message("No players in tournament")
+            return
+
+        # Find highest score and winners
+        max_points = max(player.point for player in players)
+        winners = [p for p in players if p.point == max_points]
+
+        # Display results through view
+        if len(winners) > 1:
+            self.view.display_tie(winners, max_points)
+        else:
+            self.view.display_single_winner(winners[0])
+
+        self.saving_tournament(self.current_tournament)

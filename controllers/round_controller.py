@@ -8,13 +8,31 @@ import random
 
 
 class RoundController:
+    """A controller class for managing tournament rounds in a chess tournament.
 
+    This class handles the creation, execution, and management of tournament rounds,
+    including player pairing, match execution, and score tracking according to Swiss tournament rules.
+
+    Attributes:
+        tournament (Tournament): The tournament instance this round belongs to
+        round (Round): The current round being managed
+        view (RoundView): The view handler for the round
+    Example:
+        round_controller = RoundController(tournament, round_number=1)
+        round_result = round_controller.manage_round()
+
+        - Implements Swiss tournament system for player pairing
+        - Tracks match results and player scores
+        - Handles both first round (random pairing) and subsequent rounds (score-based pairing)
+        - Ensures players don't face the same opponent twice
+    """
     def __init__(self, tournament: Tournament, round_number: int):
         self.tournament = tournament
         self.round = Round(number=round_number)
         self.round.name = f"Round {round_number}"
         self.view = RoundView(self.round)
         self.tournament = tournament
+        self.total_rounds = tournament.roundNumber
 
     def manage_round(self):
         """
@@ -54,7 +72,8 @@ class RoundController:
             players = self.pair_players()
         self.start_matches(players)
         self.round.endDate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        return self.round.model_dump()
+        is_last_round = self.round.number == self.total_rounds
+        return self.round.model_dump(), is_last_round
 
     def start_matches(self, players: list):
         """

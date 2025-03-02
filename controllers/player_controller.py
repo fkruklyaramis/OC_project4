@@ -1,10 +1,22 @@
 from models.player_model import Player
 from views.player_view import PlayerView
 from models.data_manager import DataManager
+from utils.validators import validate_date_format, validate_chess_id, validate_player_age
 
 
 class PlayerController(DataManager):
+    """
+    PlayerController class manages player-related operations in a chess tournament system.
 
+    This class handles the creation, storage, and display of player information. It provides
+    a menu-based interface for managing players and ensures data validation before storage.
+    It inherits from DataManager for data persistence operations.
+
+    Attributes:
+        view (PlayerView): The view component for user interaction
+        players_file (str): Path to the JSON file storing player data
+        menu_choice_list (list): List of dictionaries containing menu options and callbacks
+    """
     def __init__(self, view: PlayerView):
         super().__init__()
         self.view = view
@@ -34,20 +46,47 @@ class PlayerController(DataManager):
 
     def add_player(self):
         """
-        Add a new player to the database.
-        This method collects player details through the view, creates a new Player instance,
-        and saves it to the database.
+        Add a new player to the system with validated information.
+        This method collects player information through the view interface and performs validation
+        on the input data. It ensures that:
+        - Birth date is in correct format (YYYY-MM-DD) and player is at least 18 years old
+        - Chess ID follows the required format (two letters followed by five digits)
+        The validated player data is then saved to persistent storage.
         Returns:
             None
         Side Effects:
-            - Creates a new player entry in the database
-            - Prints success message to console
+            - Interacts with user through view interface for data input
+            - Saves player data to storage system
+            - Shows success/error messages through view interface
         """
 
-        data = self.view.get_player_details()
-        player = Player(**data)
-        # call save_player from datamanager
-        self.save_player(player.to_dict())
+        last_name = self.view.get_last_name()
+        first_name = self.view.get_first_name()
+
+        while True:
+            birth_date = self.view.get_birth_date()
+            if not validate_date_format(birth_date):
+                self.view.show_message("Invalid date format. Please use YYYY-MM-DD format.")
+                continue
+            if not validate_player_age(birth_date):
+                self.view.show_message("Player must be at least 18 years old.")
+                continue
+            break
+
+        while True:
+            chess_id = self.view.get_chess_id()
+            if validate_chess_id(chess_id):
+                break
+            self.view.show_message("Invalid chess ID format. two letters and five digits required (e.g., AB12345).")
+
+        player_data = {
+            "last_name": last_name,
+            "first_name": first_name,
+            "birth_date": birth_date,
+            "chess_id": chess_id.upper()
+        }
+        player = Player(**player_data)
+        self.save_data(player.model_dump(exclude='point'), 'players')
         self.view.show_message("Player added successfully!")
 
     def list_players(self):
@@ -60,5 +99,5 @@ class PlayerController(DataManager):
             - Displays a list of all players to the console
         """
         # call load_players from datamanager
-        players = self.load_players()
+        players = self.load_data('players')
         self.view.display_players(players)

@@ -2,6 +2,16 @@ import os
 
 
 class InterfaceView():
+    """A class for handling the user interface and menu display.
+
+    This class provides functionality for displaying a menu of choices to the user
+    and handling user input. It maintains a list of menu options and provides
+    methods to display them and capture user selections.
+
+    Attributes:
+        choice_list (list): A list of dictionaries containing menu options,
+                           where each dictionary has 'value' and 'label' keys
+    """
     def __init__(self):
         self.choice_list = []
 

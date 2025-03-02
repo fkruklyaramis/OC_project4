@@ -3,6 +3,21 @@ import models.match_model as match_model
 
 
 class MatchView():
+    """
+    A view class responsible for handling the display and interaction of match plays between two players.
+
+    This class manages the visual representation of matches, user input for match results,
+    and score updates for players.
+
+    Attributes:
+        match_data (tuple): A tuple containing match information including player data and scores.
+        colors (dict): A dictionary containing color settings for player display.
+
+    Example:
+        match_view = MatchView(match_data, colors)
+        match_view.play_match(1, 4)  # Play match 1 of 4 total matches
+    """
+
     def __init__(self, match_data: tuple, colors: dict):
         self.match = match_data
         self.colors = colors

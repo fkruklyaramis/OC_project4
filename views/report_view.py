@@ -6,6 +6,29 @@ import os
 
 
 class ReportView(InterfaceView):
+    """A view class for displaying reports and handling user interface for tournament management.
+
+    This class extends InterfaceView and provides methods for displaying various tournament-related
+    information either in HTML format (using Jinja2 templates) or as plain text in the console.
+
+    Attributes:
+        env (Environment): Jinja2 environment for template rendering
+        console (Console): Rich library console instance for formatted output
+        display_mode (str): Current display mode ('html' or 'console')
+
+    Methods:
+        choose_display_mode(): Prompts user to select display format
+        render_html(template_name, **kwargs): Renders HTML template and converts to markdown
+        show_players_list(players): Displays list of players
+        show_all_tournaments(tournaments): Shows all tournaments
+        show_tournament_details(tournament): Displays details of a specific tournament
+        show_tournament_players(players, tournament_name): Shows players in a tournament
+        show_tournament_rounds(rounds, tournament_name): Displays tournament rounds and matches
+        get_tournament_name(): Gets tournament name from user input
+
+        view = ReportView()
+        view.show_players_list([{'last_name': 'Doe', 'first_name': 'John'}])
+    """
     def __init__(self):
         super().__init__()
         template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')

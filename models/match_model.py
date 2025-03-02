@@ -13,4 +13,10 @@ SCORE_MAPPING = {
 
 
 class Match(BaseModel):
+    """
+    A match class for managing matches between players and their scores.
+    Contains:
+    - Match outcome and score mapping
+    - Player pairings with their respective scores
+    """
     match: Tuple[List[Player | float], List[Player | float]]

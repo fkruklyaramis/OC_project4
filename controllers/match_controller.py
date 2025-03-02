@@ -5,6 +5,11 @@ import random
 
 
 class MatchController:
+    """
+    Controller class for managing chess matches.
+    Handles the game logic between two players, including color assignment and score tracking.
+    Works with Match model and MatchView to coordinate game execution and result recording.
+    """
     def __init__(self, tournament, player1: Player, player2: Player):
         self.tournament = tournament
         self.view = MatchView

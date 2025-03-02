@@ -2,29 +2,38 @@ from views.interface_view import InterfaceView
 
 
 class PlayerView(InterfaceView):
+    """A class for handling player-related views and user interactions.
 
-    def get_player_details(self):
-        """
-        Gets player details from user input.
-        This method prompts the user to enter player information including:
-        - Last name
-        - First name
-        - Birth date (in YYYY-MM-DD format)
-        - Chess ID
-        Returns:
-            dict: A dictionary containing the player details with keys:
-                - last_name (str)
-                - first_name (str)
-                - birth_date (str)
-                - chess_id (str)
-        """
+    This class extends InterfaceView and provides methods for getting player information
+    from user input and displaying player data.
 
-        print("Add a player :")
-        last_name = input("Last name : ")
-        first_name = input("First name : ")
-        birth_date = input("Birth date (YYYY-MM-DD) : ")
-        chess_id = input("Chess id : ")
-        return {"last_name": last_name, "first_name": first_name, "birth_date": birth_date, "chess_id": chess_id}
+    Methods:
+        get_last_name(): Get player's last name from user input
+        get_first_name(): Get player's first name from user input
+        get_birth_date(): Get player's birth date from user input
+        get_chess_id(): Get player's chess ID from user input
+        display_players(players): Display a list of players with their details
+        show_message(message): Display a message to the user
+
+    Attributes:
+        Inherits from InterfaceView
+    """
+
+    def get_last_name(self):
+        """Get player's last name from user input."""
+        return input("Last name : ")
+
+    def get_first_name(self):
+        """Get player's first name from user input."""
+        return input("First name : ")
+
+    def get_birth_date(self):
+        """Get player's birth date from user input."""
+        return input("Birth date (YYYY-MM-DD) : ")
+
+    def get_chess_id(self):
+        """Get player's chess ID from user input."""
+        return input("Chess id (format: AB12345) : ")
 
     def display_players(self, players):
         """
@@ -37,6 +46,9 @@ class PlayerView(InterfaceView):
         """
 
         print("\nPlayer list :")
+        if not players:
+            print("No players found.")
+            return
         for player in players:
             print(f"{player['chess_id']} - {player['last_name']} {player['first_name']} "
                   f"{player['birth_date']}")

@@ -50,7 +50,7 @@ class ReportController(DataManager):
             None
         """
 
-        players = self.load_players()
+        players = self.load_data('players')
         sorted_players = sorted(players, key=lambda x: (x['last_name'].lower(), x['first_name'].lower()))
         self.view.show_players_list(sorted_players)
 
@@ -65,7 +65,7 @@ class ReportController(DataManager):
             None
         """
 
-        tournaments = self.load_tournaments()
+        tournaments = self.load_data('tournaments')
         sorted_tournaments = sorted(tournaments, key=lambda x: x['startDate'])
         self.view.show_all_tournaments(sorted_tournaments)
 
@@ -85,7 +85,7 @@ class ReportController(DataManager):
         """
 
         name = self.view.get_tournament_name()
-        tournaments = self.load_tournaments()
+        tournaments = self.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None
@@ -96,8 +96,21 @@ class ReportController(DataManager):
             self.view.show_tournament_details(None)
 
     def show_tournament_players(self):
+        """Display a list of players for a specific tournament sorted by last name and first name.
+
+        This method gets a tournament name from the user via the view, loads tournament data,
+        and displays the sorted list of players for the specified tournament.
+
+        Returns:
+
+        Side Effects:
+            - Calls view methods to get tournament name and display players
+            - Loads tournament data from storage
+            - If tournament is not found, displays empty rounds view
+        """
+
         name = self.view.get_tournament_name()
-        tournaments = self.load_tournaments()
+        tournaments = self.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None
@@ -114,9 +127,20 @@ class ReportController(DataManager):
             self.view.show_tournament_rounds(None, None)
 
     def show_tournament_rounds(self):
-        """Display rounds and matches of a tournament"""
+        """
+        Display the rounds of a specified tournament.
+        This method retrieves tournament rounds based on the tournament name provided by the user.
+        It loads the tournament data, searches for a match, and displays the rounds information
+        through the view.
+        Returns:
+        Side Effects:
+            - Prompts user for tournament name via view
+            - Loads tournament data from storage
+            - Displays tournament rounds information via view
+        """
+
         name = self.view.get_tournament_name()
-        tournaments = self.load_tournaments()
+        tournaments = self.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None

@@ -2,29 +2,23 @@ from pydantic import BaseModel
 
 
 class Player(BaseModel):
+    """Represents a chess player.
+
+    This class provides a data model for storing and managing chess player information.
+    Inherits from BaseModel and provides functionality for player data management.
+
+    Attributes:
+        last_name (str): The player's last name
+        first_name (str): The player's first name
+        birth_date (str): The player's date of birth
+        chess_id (str): Unique identifier for the player in the chess system
+        point (float): The player's current points/score, defaults to 0.0
+    """
     last_name: str
     first_name: str
     birth_date: str
     chess_id: str
     point: float = 0.0
-
-    def to_dict(self):
-        """
-        Convert player instance to a dictionary.
-        Returns:
-            dict: A dictionary containing the player's information with the following keys:
-                - last_name (str): The player's last name
-                - first_name (str): The player's first name
-                - birth_date (str): The player's birth date
-                - chess_id (str): The player's chess ID
-        """
-
-        return {
-            "last_name": self.last_name,
-            "first_name": self.first_name,
-            "birth_date": self.birth_date,
-            "chess_id": self.chess_id
-        }
 
     def __hash__(self):
         """

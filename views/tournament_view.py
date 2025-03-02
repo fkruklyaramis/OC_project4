@@ -2,11 +2,32 @@ from views.interface_view import InterfaceView
 
 
 class TournamentView(InterfaceView):
+    """
+    A view class for managing tournament-related user interactions.
 
+    This class handles the display and input collection for tournament management,
+    including player selection, tournament details input, and message display.
+
+    Attributes:
+        players (list): A list of player dictionaries containing player information.
+
+    Methods:
+        set_players_list(players): Sets the list of available players.
+        get_name(): Gets tournament name from user input.
+        get_location(): Gets tournament location from user input.
+        get_start_date(): Gets tournament start date from user input.
+        get_end_date(): Gets tournament end date from user input.
+        get_description(): Gets tournament description from user input.
+        show_message(message): Displays a message to the user.
+        select_players(): Allows user to select players for the tournament.
+
+    Inherits From:
+        InterfaceView: Base class for view interfaces.
+    """
     def __init__(self):
         super().__init__()
         self.players = []
-        print("Welcome to the tournament manager!")
+        print("\nWelcome to the tournament manager!")
 
     def set_players_list(self, players):
         """
@@ -19,30 +40,29 @@ class TournamentView(InterfaceView):
 
         self.players = players
 
-    def get_tournament_details(self):
-        """Gets tournament details from user input.
-        This method prompts the user to enter various tournament details including name,
-        location, start date, end date, list of players, and description.
-        Returns:
-            dict: A dictionary containing the tournament details with the following keys:
-                - name (str): Name of the tournament
-                - location (str): Location where tournament takes place
-                - startDate (str): Start date in YYYY-MM-DD format
-                - endDate (str): End date in YYYY-MM-DD format
-                - playerList (list): List of selected players
-                - description (str): Tournament description
-        """
+    def get_name(self):
+        """Get tournament name from user input."""
+        return input("Name: ")
 
-        print("Create tournament")
-        tournament_name = input("Name: ")
-        tournament_location = input("Location : ")
-        startDate = input("Start date (YYYY-MM-DD) : ")
-        endDate = input("End date (YYYY-MM-DD) : ")
-        playerList = self.select_players()
-        description = input("Description : ")
-        # créer l'objet ici et le retourner
-        return {"name": tournament_name, "location": tournament_location,
-                "startDate": startDate, "endDate": endDate, "playerList": playerList, "description": description}
+    def get_location(self):
+        """Get tournament location from user input."""
+        return input("Location: ")
+
+    def get_start_date(self):
+        """Get tournament start date from user input."""
+        return input("Start date (YYYY-MM-DD): ")
+
+    def get_end_date(self):
+        """Get tournament end date from user input."""
+        return input("End date (YYYY-MM-DD): ")
+
+    def get_description(self):
+        """Get tournament description from user input."""
+        return input("Description: ")
+
+    def show_message(self, message: str):
+        """Display a message to the user"""
+        print(f"\n{message}")
 
     def select_players(self) -> list:
         """
@@ -116,3 +136,26 @@ class TournamentView(InterfaceView):
                 return player_list
             else:
                 print("\nError: Please select at least 2 players.")
+
+    def display_single_winner(self, winner):
+        """
+        Display information for a single tournament winner.
+        Args:
+            winner: Player object representing the tournament winner
+        """
+        self.show_message(
+            f"Tournament Winner: {winner.first_name} {winner.last_name} "
+            f"with {winner.point} points!"
+        )
+
+    def display_tie(self, winners, points):
+        """
+        Display information when tournament ends in a tie.
+        Args:
+            winners (list): List of Player objects who tied for first
+            points (float): The winning point total
+        """
+        self.show_message("Tournament ended in a tie!")
+        print("Winners with", points, "points:")
+        for player in winners:
+            print(f"- {player.first_name} {player.last_name}")

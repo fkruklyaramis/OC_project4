@@ -5,7 +5,9 @@ from views.tournament_view import TournamentView
 
 
 class InterfaceController():
-
+    """Interface controller class.
+    This class manages the user interface and menu navigation.
+    """
     def __init__(self, view: InterfaceView):
         self.view = view
 
