@@ -4,7 +4,7 @@ from models.data_manager import DataManager
 from utils.validators import validate_date_format, validate_chess_id, validate_player_age
 
 
-class PlayerController(DataManager):
+class PlayerController():
     """
     PlayerController class manages player-related operations in a chess tournament system.
 
@@ -18,13 +18,13 @@ class PlayerController(DataManager):
         menu_choice_list (list): List of dictionaries containing menu options and callbacks
     """
     def __init__(self, view: PlayerView):
-        super().__init__()
         self.view = view
         self.players_file = "./data/players.json"
         self.menu_choice_list = [{'value': 1, 'label': 'Add a player', 'callback': self.add_player},
                                  {'value': 2, 'label': 'List player', 'callback': self.list_players},
                                  {'value': 3, 'label': 'Back to main menu', 'callback': None}]
         self.view.set_choice_list(self.menu_choice_list)
+        self.data_manager = DataManager()
 
     def manage_players(self):
         """
@@ -86,7 +86,7 @@ class PlayerController(DataManager):
             "chess_id": chess_id.upper()
         }
         player = Player(**player_data)
-        self.save_data(player.model_dump(exclude='point'), 'players')
+        self.data_manager.save_data(player.model_dump(exclude='point'), 'players')
         self.view.show_message("Player added successfully!")
 
     def list_players(self):
@@ -99,5 +99,5 @@ class PlayerController(DataManager):
             - Displays a list of all players to the console
         """
         # call load_players from datamanager
-        players = self.load_data('players')
+        players = self.data_manager.load_data('players')
         self.view.display_players(players)

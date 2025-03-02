@@ -56,30 +56,6 @@ class DataManager:
         except FileNotFoundError:
             return []
 
-    def save_player(self, player_data: dict):
-        """
-        Save a player's data to the JSON file containing all players.
-
-        Args:
-            player_data (dict): Dictionary containing player's information with following keys:
-                - last_name (str): Player's last name
-                - first_name (str): Player's first name
-                - birth_date (str): Player's birth date
-                - chess_id (str): Player's unique chess identifier
-                - ranking (int): Player's chess ranking
-
-        Returns:
-            None
-
-        Note:
-            The player data is appended to the existing list of players in the JSON file.
-        """
-
-        players = self.load_players()
-        players.append(player_data)
-        with open(self.players_file, "w") as file:
-            json.dump(players, file, indent=4)
-
     def save_data(self, data: dict, data_type: str) -> None:
         """
         Save data to the appropriate JSON file based on the specified type.

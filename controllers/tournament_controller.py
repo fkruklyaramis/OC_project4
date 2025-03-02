@@ -6,10 +6,11 @@ from views.report_view import ReportView
 from controllers.player_controller import PlayerController
 from controllers.round_controller import RoundController
 from controllers.report_controller import ReportController
+
 from utils.validators import validate_date_format, validate_tournament_start_date, validate_tournament_dates_order
 
 
-class TournamentController(DataManager):
+class TournamentController():
     """
     Controller class for managing tournament operations.
 
@@ -24,7 +25,6 @@ class TournamentController(DataManager):
         current_tournament (Tournament): Currently active tournament instance
     """
     def __init__(self, view: TournamentView):
-        super().__init__()
         self.view = view
         self.tournaments_file = "./data/tournaments.json"
         self.menu_choice_list = [{'value': 1, 'label': 'Start a tournament', 'callback': self.add_tournament},
@@ -32,6 +32,7 @@ class TournamentController(DataManager):
                                  {'value': 3, 'label': 'View reports', 'callback': self.view_reports},
                                  {'value': 4, 'label': 'Quit', 'callback': exit}]
         self.view.set_choice_list(self.menu_choice_list)
+        self.data_manager = DataManager()
         self.current_tournament = None
 
     def view_reports(self):
@@ -113,7 +114,7 @@ class TournamentController(DataManager):
                 continue
             break
 
-        players = PlayerController(PlayerView()).load_data('players')
+        players = self.data_manager.load_data('players')
         self.view.set_players_list(players)
         player_list = self.view.select_players()
         description = self.view.get_description()
@@ -209,7 +210,7 @@ class TournamentController(DataManager):
                         player = match_data[i][0]
                         match_data[i][0] = player.model_dump() if hasattr(player, 'model_dump') else player
 
-        self.save_data(tournament_dict, 'tournaments')
+        self.data_manager.save_data(tournament_dict, 'tournaments')
 
     def end_tournament(self):
         """

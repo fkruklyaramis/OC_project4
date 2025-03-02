@@ -4,12 +4,12 @@ from controllers.player_controller import PlayerController
 from models.data_manager import DataManager
 
 
-class ReportController(DataManager):
+class ReportController():
 
     def __init__(self, view: ReportView):
-        super().__init__()
         self.view = view
         self.player_controller = PlayerController(PlayerView())
+        self.data_manager = DataManager()
         self.menu_choice_list = [
             {'value': 1, 'label': 'Show all players (alphabetically)', 'callback':
              self.show_all_players},
@@ -50,7 +50,7 @@ class ReportController(DataManager):
             None
         """
 
-        players = self.load_data('players')
+        players = self.data_manager.load_data('players')
         sorted_players = sorted(players, key=lambda x: (x['last_name'].lower(), x['first_name'].lower()))
         self.view.show_players_list(sorted_players)
 
@@ -65,7 +65,7 @@ class ReportController(DataManager):
             None
         """
 
-        tournaments = self.load_data('tournaments')
+        tournaments = self.data_manager.load_data('tournaments')
         sorted_tournaments = sorted(tournaments, key=lambda x: x['startDate'])
         self.view.show_all_tournaments(sorted_tournaments)
 
@@ -85,7 +85,7 @@ class ReportController(DataManager):
         """
 
         name = self.view.get_tournament_name()
-        tournaments = self.load_data('tournaments')
+        tournaments = self.data_manager.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None
@@ -110,7 +110,7 @@ class ReportController(DataManager):
         """
 
         name = self.view.get_tournament_name()
-        tournaments = self.load_data('tournaments')
+        tournaments = self.data_manager.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None
@@ -140,7 +140,7 @@ class ReportController(DataManager):
         """
 
         name = self.view.get_tournament_name()
-        tournaments = self.load_data('tournaments')
+        tournaments = self.data_manager.load_data('tournaments')
         tournament = next(
             (t for t in tournaments if t['name'].lower() == name.lower()),
             None
