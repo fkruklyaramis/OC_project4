@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 119
+exclude = 
+    env/*,
+    __pycache__,
+    .git,
+    .gitignore,
+    .env,
+    flake8_report/*,
+    templates/*,
+    data/*
+
+max-complexity = 10
+
+# Configuration pour flake8-html
+format = html
+htmldir = flake8_report

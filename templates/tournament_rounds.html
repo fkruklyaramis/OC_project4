@@ -1,0 +1,24 @@
+<div class="tournament-rounds">
+    {%- if tournament_name %}
+        <h2>=== Rounds and Matches in {{ tournament_name }} ===</h2>
+        {%- for round in rounds %}
+        <div class="round">
+            <h3>Round: {{ round.roundNumber }}</h3>
+            <p>Started: {{ round.startDate }}</p>
+            <p>Ended: {{ round.endDate }}</p>
+            <h4>Matches:</h4>
+            <ul>
+            {%- for match in round.matchList %}
+                {%- set player1 = match.match[0][0] %}
+                {%- set score1 = match.match[0][1] %}
+                {%- set player2 = match.match[1][0] %}
+                {%- set score2 = match.match[1][1] %}
+                <li>{{ player1.first_name }} {{ player1.last_name }} ({{ score1 }}) vs {{ player2.first_name }} {{ player2.last_name }} ({{ score2 }})</li>
+            {%- endfor %}
+            </ul>
+        </div>
+        {%- endfor %}
+    {%- else %}
+        <p>No tournament found with that name.</p>
+    {%- endif %}
+    </div>

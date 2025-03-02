@@ -1,0 +1,11 @@
+<div class="tournament-details">
+    {% if tournament %}
+    <h2>=== Tournament Details: {{ tournament.name }} ===</h2>
+    <p>Location: {{ tournament.location }}</p>
+    <p>Start Date: {{ tournament.startDate }}</p>
+    <p>End Date: {{ tournament.endDate }}</p>
+    <p>Description: {{ tournament.description }}</p>
+    {% else %}
+    <p>No tournament found with that name.</p>
+    {% endif %}
+</div>

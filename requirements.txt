@@ -1,0 +1,4 @@
+pydantic==2.5.3
+flake8-html
+jinja2
+rich

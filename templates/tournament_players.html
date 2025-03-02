@@ -1,0 +1,12 @@
+<div class="tournament-players">
+    {% if tournament_name %}
+    <h2>=== Players in {{ tournament_name }} ===</h2>
+    <ul>
+    {% for player in players %}
+        <li>{{ player.last_name }}, {{ player.first_name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <p>No tournament found with that name.</p>
+    {% endif %}
+</div>
