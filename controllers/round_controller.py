@@ -66,7 +66,8 @@ class RoundController:
             # randomize players for firdst round
             random.shuffle(self.tournament.playerList)
             players = self.tournament.playerList
-            # afficher la liste des matchs du premier round
+            # show matches for first round
+            self.view.display_round_matches(players)
         else:
             # call matching player method
             players = self.pair_players()
